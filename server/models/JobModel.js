@@ -5,9 +5,12 @@ const jobSchema = new mongoose.Schema({
   description: { type: String },
   skills: {type: Map, of: Number},
   workExperienceYears: { type: Number },
-  eduacationLevel: { type: Number },
+  eduacationLevel: { type: String },
   educationField: { type: String },
+  candidateCount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });
 
 const Job = mongoose.model("Job", jobSchema);
+
+export default Job;
