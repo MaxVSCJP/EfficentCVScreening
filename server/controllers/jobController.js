@@ -6,7 +6,7 @@ import {
   deleteJobService
 } from "../services/jobService.js";
 
-// Controller just calls service and handles HTTP
+
 export const createJob = async (req, res) => {
   try {
     const job = await createJobService(req.body);
