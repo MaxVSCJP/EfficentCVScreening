@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import CriteriaForm from "./components/CriteriaForm";
 import BulkUpload from "./components/BulkUpload";
 import ResultsTable from "./components/ResultsTable";
@@ -8,7 +8,7 @@ const App = () => {
   const [criteria, setCriteria] = useState<ScreeningCriteria>({
     title: "",
     description: "",
-    skills: "",
+    skills: {}, // FIX: Initialized as object for weighted skills
     workExperienceYears: 0,
     eduacationLevel: 1,
     educationField: "",
@@ -29,7 +29,8 @@ const App = () => {
             onSaveSuccess={(id) => setActiveJobId(id)}
           />
           <BulkUpload
-            jobId={activeJobId}
+            activeJobId={activeJobId}
+            setActiveJobId={setActiveJobId} // Pass setter to allow manual selection
             setTopCandidates={setTopCandidates}
             setLoading={setLoading}
           />
