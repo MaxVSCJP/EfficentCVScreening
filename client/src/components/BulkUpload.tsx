@@ -8,9 +8,10 @@ interface BulkUploadProps {
   setActiveJobId: (id: string | number) => void;
   setTopCandidates: React.Dispatch<React.SetStateAction<Candidate[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  onUploadComplete: () => Promise<void>;
 }
 
-const BulkUpload: React.FC<BulkUploadProps> = ({ activeJobId, setActiveJobId, setTopCandidates, setLoading }) => {
+const BulkUpload: React.FC<BulkUploadProps> = ({ activeJobId, setActiveJobId, setTopCandidates, setLoading, onUploadComplete }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -41,8 +42,9 @@ const BulkUpload: React.FC<BulkUploadProps> = ({ activeJobId, setActiveJobId, se
     setLoading(true);
     setIsUploading(true);
     try {
-      const data = await uploadResumesApi(activeJobId, files, (p) => setUploadProgress(p));
-      setTopCandidates(data.topCandidates || []);
+      await uploadResumesApi(activeJobId, files, (p) => setUploadProgress(p));
+      setTopCandidates([]);
+      await onUploadComplete();
       setFiles([]);
     } catch (error) {
       alert("AI Screening failed. Please try again.");
