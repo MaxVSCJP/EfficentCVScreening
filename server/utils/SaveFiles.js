@@ -3,7 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
-import { origin } from "../Config/prodevConfig.js";
+const origin = process.env.ORIGIN || "http://localhost:5000";
 
 const uploadDir = process.env.UPLOAD_DIR || "./Uploads";
 
