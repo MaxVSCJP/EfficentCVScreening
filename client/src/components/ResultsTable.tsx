@@ -1,5 +1,5 @@
 import React from "react";
-import { Trophy, User, GraduationCap, ChevronRight } from "lucide-react";
+import { Trophy, User, RefreshCcw, Download } from "lucide-react";
 import type { Candidate } from "../types";
 
 
@@ -7,12 +7,16 @@ interface ResultsTableProps {
   data: Candidate[];
   loading: boolean;
   requestedRank: number; 
+  onRefresh: () => Promise<void>;
+  canRefresh: boolean;
 }
 
 const ResultsTable: React.FC<ResultsTableProps> = ({
   data,
   loading,
   requestedRank, 
+  onRefresh,
+  canRefresh,
 }) => {
   if (loading) {
     return (
@@ -43,6 +47,17 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
         <p className="text-slate-400 max-w-xs mx-auto">
           Upload candidates on the left to see the top {requestedRank} performers ranked by AI.
         </p>
+        <button
+          type="button"
+          onClick={() => {
+            void onRefresh();
+          }}
+          disabled={!canRefresh || loading}
+          className="mt-5 inline-flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+          Refresh Results
+        </button>
       </div>
     );
   }
@@ -64,6 +79,17 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             </p>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            void onRefresh();
+          }}
+          disabled={!canRefresh || loading}
+          className="inline-flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
+          Refresh
+        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -72,9 +98,11 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             <tr>
               <th className="p-4 w-16 text-center">Rank</th>
               <th className="p-4">Candidate Information</th>
-              <th className="p-4">Education</th>
+              <th className="p-4 text-center">Skills Score</th>
+              <th className="p-4 text-center">Work Exp Score</th>
+              <th className="p-4 text-center">Education Score</th>
               <th className="p-4 text-center">Compatibility</th>
-              <th className="p-4 w-12"></th>
+              <th className="p-4 text-center">Resume</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -91,49 +119,57 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                     <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors shadow-inner">
                       <User size={20} />
                     </div>
-                    <span className="font-bold text-slate-700">{c.name}</span>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <div className="flex items-start gap-2">
-                    <GraduationCap
-                      size={16}
-                      className="text-slate-400 mt-0.5"
-                    />
                     <div>
-                      <span className="text-sm font-bold text-slate-700 block">
-                        {c.eduLevel}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        {c.eduBackground}
-                      </span>
+                      <span className="font-bold text-slate-700 block">{c.name}</span>
+                      {c.email ? (
+                        <span className="text-xs text-slate-500">{c.email}</span>
+                      ) : null}
                     </div>
                   </div>
+                </td>
+                <td className="p-4 text-center">
+                  <span className="text-sm font-bold text-slate-700">{c.skillScore.toFixed(1)}/10.0</span>
+                </td>
+                <td className="p-4 text-center">
+                  <span className="text-sm font-bold text-slate-700">{c.workScore.toFixed(1)}/10.0</span>
+                </td>
+                <td className="p-4 text-center">
+                  <span className="text-sm font-bold text-slate-700">{c.educationScore.toFixed(1)}/10.0</span>
                 </td>
                 <td className="p-4">
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="w-24 bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
                       <div
                         className={`h-full transition-all duration-1000 ${
-                          c.score > 80
+                          c.averageScore * 10 > 80
                             ? "bg-green-500"
-                            : c.score > 60
+                            : c.averageScore * 10 > 60
                               ? "bg-blue-500"
                               : "bg-slate-400"
                         }`}
-                        style={{ width: `${c.score}%` }}
+                        style={{ width: `${Math.max(0, Math.min(100, c.averageScore * 10))}%` }}
                       ></div>
                     </div>
                     <span className="text-[10px] font-black text-slate-600 uppercase italic">
-                      {c.score}% Match
+                      {(c.averageScore * 10).toFixed(0)}% Match
                     </span>
                   </div>
                 </td>
                 <td className="p-4">
-                  <ChevronRight
-                    size={18}
-                    className="text-slate-300 group-hover:text-blue-500 transition-all cursor-pointer"
-                  />
+                  {c.resumeUrl ? (
+                    <a
+                      href={c.resumeUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      download={`${(c.name || "resume").replace(/\s+/g, "_")}.pdf`}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    >
+                      <Download size={14} />
+                      Download
+                    </a>
+                  ) : (
+                    <span className="text-xs text-slate-400">Unavailable</span>
+                  )}
                 </td>
               </tr>
             ))}

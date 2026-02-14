@@ -3,6 +3,18 @@ import type { ScreeningCriteria, Candidate } from '../types';
 
 const BACKEND_ORIGIN = 'http://localhost:5000';
 
+export interface RankedResumeApiItem {
+  _id: string;
+  fileUrl?: string;
+  name?: string;
+  email?: string;
+  skillScore?: number;
+  workScore?: number;
+  educationScore?: number;
+  similarityScore?: number;
+  averageScore?: number;
+}
+
 // 1. Save new job criteria
 export const saveRequirementsApi = async (criteria: ScreeningCriteria): Promise<{ jobId: string | number }> => {
   console.log("Saving criteria to backend:", criteria);
@@ -13,6 +25,13 @@ export const saveRequirementsApi = async (criteria: ScreeningCriteria): Promise<
 // 2. NEW: Fetch all jobs for the dropdown selector
 export const getJobsApi = async (): Promise<{ _id: string; title: string }[]> => {
   const response = await axios.get(`${BACKEND_ORIGIN}/api/jobs`);
+  return response.data;
+};
+
+export const getRankedResumesApi = async (
+  jobId: string | number
+): Promise<RankedResumeApiItem[]> => {
+  const response = await axios.get(`${BACKEND_ORIGIN}/api/resumes/${jobId}`);
   return response.data;
 };
 

@@ -5,13 +5,15 @@ export interface ScreeningCriteria {
   workExperienceYears: number | '';
   eduacationLevel: number;
   educationField: string;
-  rankLimit: number; 
+  candidateCount: number; 
 }
 
 export interface Candidate {
   name: string;
-  score: number;
-  eduLevel: string;
-  eduBackground: string;
   email?: string;
+  resumeUrl?: string;
+  skillScore: number;
+  workScore: number;
+  educationScore: number;
+  averageScore: number;
 }
