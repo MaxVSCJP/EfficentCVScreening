@@ -1,11 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import 'dotenv/config';
 
-// 1. Initialize with your API Key directly (best via process.env)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function extractJsonFromText(text, scoringMatrix) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
   const prompt = `
 ### ROLE
@@ -62,16 +60,9 @@ SM_JSON:
 ${JSON.stringify(scoringMatrix)}
   `;
 
-  try {
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const output = response.text();
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const output = response.text();
 
-    // Clean the output in case the model returns markdown code blocks
-    const cleanJson = output.replace(/```json|```/g, "").trim();
-    return JSON.parse(cleanJson);
-  } catch (error) {
-    console.error("Error calling Gemini API:", error);
-    throw error;
-  }
+  return JSON.parse(output);
 }

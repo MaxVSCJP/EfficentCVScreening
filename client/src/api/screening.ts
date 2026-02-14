@@ -16,21 +16,6 @@ export const getJobsApi = async (): Promise<{ _id: string; title: string }[]> =>
   return response.data;
 };
 
-export interface RankedResumeApiItem {
-  _id: string;
-  name?: string;
-  email?: string;
-  educationScore?: number;
-  averageScore?: number;
-}
-
-export const getRankedResumesApi = async (
-  jobId: string | number
-): Promise<RankedResumeApiItem[]> => {
-  const response = await axios.get(`${BACKEND_ORIGIN}/api/resumes/${jobId}`);
-  return response.data;
-};
-
 // 3. Upload resumes linked to a specific jobId
 export const uploadResumesApi = async (
   jobId: string | number,

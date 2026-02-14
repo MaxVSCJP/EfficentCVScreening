@@ -1,5 +1,5 @@
 import React from "react";
-import { Trophy, User, GraduationCap, ChevronRight, RefreshCcw } from "lucide-react";
+import { Trophy, User, GraduationCap, ChevronRight } from "lucide-react";
 import type { Candidate } from "../types";
 
 
@@ -7,16 +7,12 @@ interface ResultsTableProps {
   data: Candidate[];
   loading: boolean;
   requestedRank: number; 
-  onRefresh: () => Promise<void>;
-  canRefresh: boolean;
 }
 
 const ResultsTable: React.FC<ResultsTableProps> = ({
   data,
   loading,
   requestedRank, 
-  onRefresh,
-  canRefresh,
 }) => {
   if (loading) {
     return (
@@ -47,17 +43,6 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
         <p className="text-slate-400 max-w-xs mx-auto">
           Upload candidates on the left to see the top {requestedRank} performers ranked by AI.
         </p>
-        <button
-          type="button"
-          onClick={() => {
-            void onRefresh();
-          }}
-          disabled={!canRefresh || loading}
-          className="mt-5 inline-flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
-          Refresh Results
-        </button>
       </div>
     );
   }
@@ -79,17 +64,6 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            void onRefresh();
-          }}
-          disabled={!canRefresh || loading}
-          className="inline-flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <RefreshCcw size={14} className={loading ? "animate-spin" : ""} />
-          Refresh
-        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -156,6 +130,10 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
                   </div>
                 </td>
                 <td className="p-4">
+                  <ChevronRight
+                    size={18}
+                    className="text-slate-300 group-hover:text-blue-500 transition-all cursor-pointer"
+                  />
                 </td>
               </tr>
             ))}

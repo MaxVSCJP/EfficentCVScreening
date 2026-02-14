@@ -37,7 +37,6 @@ export const uploadResume = async (req, res) => {
       await resumeQueue.add("parse-pdf", {
         filePath: filePath,
         jobRequirements: jobRequirements,
-        fileUrl: fileUrl,
       });
     }
 
@@ -64,7 +63,7 @@ export const getResumesForJob = async (req, res) => {
   }
 
   try {
-    const resumes = await Resume.find({ jobId }).sort({ averageScore: -1 }).limit(candidatesCount);
+    const resumes = await Resume.find({ jobId }).sort({ averageScore: 1 }).limit(candidatesCount);
     res.json(resumes);
   } catch (error) {
     console.error("Error fetching resumes:", error);
