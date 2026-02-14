@@ -4,9 +4,7 @@ import { uploadResume, getResumesForJob } from "../controllers/resumeControllers
 
 const router = express.Router();
 
-const upload = multer({
-    dest: "Uploads/",
-})
+const upload = multer();
 
 router.post("/upload/:jobId", upload.array("resume"), uploadResume);
 router.get("/:jobId", getResumesForJob);

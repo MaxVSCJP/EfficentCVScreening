@@ -16,17 +16,18 @@ const ensureDirectory = (dirPath) => {
 export const saveFile = async (pdfBuffer, originalname) => {
   try {
     const fileName = `${Date.now()}-${originalname}`;
-    const outputDir = path.join(uploadDir, "PortfolioPDFs");
 
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    const filePath = path.join(outputDir, fileName);
+    console.log(`Saving file to: ${uploadDir}/${fileName}`);
+
+    const filePath = path.join(uploadDir, fileName);
 
     await fs.promises.writeFile(filePath, pdfBuffer);
 
-    return `${origin}/Uploads/PortfolioPDFs/${fileName}`;
+    return { fileUrl: `${origin}/Uploads/${fileName}`, filePath };
   } catch (error) {
     console.error("Error saving PDF:", error);
   }

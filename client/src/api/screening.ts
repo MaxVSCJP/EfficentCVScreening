@@ -24,10 +24,9 @@ export const uploadResumesApi = async (
 ): Promise<{ topCandidates: Candidate[] }> => {
   const formData = new FormData();
   formData.append('jobId', jobId.toString());
-  files.forEach(file => formData.append('resumes', file));
+  files.forEach(file => formData.append('resume', file));
 
   const response = await axios.post(`${BACKEND_ORIGIN}/api/resumes/upload/${jobId}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total) {
         const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);

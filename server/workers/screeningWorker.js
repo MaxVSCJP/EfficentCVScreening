@@ -15,6 +15,8 @@ const worker = new Worker(
     // 1. Parse PDF
     const text = await parsePdf(filePath);
 
+    console.log("Extracted text length:", text.length);
+
     // 2. Send to AI → JSON
     const json = await extractJsonFromText(text, jobRequirements);
 
