@@ -21,7 +21,11 @@
     "mongoose": "^9.2.1",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
-    "nodemailer": "^8.0.1"
+    "nodemailer": "^8.0.1",
+    "@google/generative-ai": "^0.24.1",
+    "bullmq": "^5.69.2",
+    "ioredis": "^5.9.3",
+    "pdf-parser": "^1.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

@@ -7,6 +7,8 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import resumeRoutes from "./routes/resumeRoutes.js";
+
 // Load environment variables
 dotenv.config();
 
@@ -66,5 +68,7 @@ app.use(
 app.get("/", (req, res) => {
   res.send("✅ Welcome to the CV Screening API!");
 });
+
+app.use("/api/resumes", resumeRoutes);
 
 export default app;
