@@ -1,8 +1,11 @@
 import axios from 'axios';
 import type { ScreeningCriteria, Candidate } from '../types';
 
+const BACKEND_ORIGIN = 'http://localhost:5000';
+
 export const saveRequirementsApi = async (criteria: ScreeningCriteria): Promise<{ jobId: string | number }> => {
-  const response = await axios.post('/api/jobs', criteria);
+  console.log("Saving criteria to backend:", criteria);
+  const response = await axios.post(`${BACKEND_ORIGIN}/api/jobs`, criteria);
   return response.data;
 };
 
@@ -15,7 +18,7 @@ export const uploadResumesApi = async (
   formData.append('jobId', jobId.toString());
   files.forEach(file => formData.append('resumes', file));
 
-  const response = await axios.post(`/api/jobs/${jobId}/screen`, formData, {
+  const response = await axios.post(`${BACKEND_ORIGIN}/api/resumes/upload/${jobId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total) {

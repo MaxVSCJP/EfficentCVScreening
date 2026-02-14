@@ -1,10 +1,9 @@
 import { Worker } from "bullmq";
-import connection from "../utils/redis";
-import parsePdf from "../utils/pdfParser";
-import extractJsonFromText from "../services/aiService";
-import fs from "fs";
+import connection from "../utils/redis.js";
+import parsePdf from "../utils/pdfParser.js";
+import extractJsonFromText from "../services/aiService.js";
 
-import Resume from "../models/ResumeModel";
+import Resume from "../models/ResumeModel.js";
 
 const worker = new Worker(
   "pdf-processing",

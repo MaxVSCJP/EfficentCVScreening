@@ -9,6 +9,7 @@ import {
 
 export const createJob = async (req, res) => {
   try {
+    console.log("Received job creation request with data:", req.body);
     const job = await createJobService(req.body);
     res.status(201).json(job);
   } catch (err) {
