@@ -1,7 +1,7 @@
 export interface ScreeningCriteria {
   title: string;
   description: string;
-  skills: string;
+  skills: Record<string, number>;
   workExperienceYears: number | '';
   eduacationLevel: number;
   educationField: string;
