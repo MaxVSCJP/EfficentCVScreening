@@ -13,7 +13,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-connectDB();
 
 app.use(cors());
 app.use(express.json());
@@ -36,6 +35,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: err.message || "Server Error" });
 });
 
+if (NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/dist")));
+
+  app.get("/{*any}", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+  });
+}
 
 const startServer = async () => {
   await connectDB();
