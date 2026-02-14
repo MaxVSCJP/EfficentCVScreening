@@ -19,6 +19,8 @@ const corsOptions = {
   origin: [
     "http://localhost:8080",
     "http://localhost:8081",
+    "http://localhost:5173",
+    "http://localhost:5174",
   ],
   optionsSuccessStatus: 200,
   credentials: true,
@@ -33,6 +35,8 @@ app.use(
           "'self'",
           "data:",
           "blob:",
+          "http://localhost:5173",
+          "http://localhost:5174",
           "http://localhost:8081",
           "http://localhost:8080",
         ],
@@ -44,9 +48,10 @@ app.use(
         fontSrc: ["'self'"],
       },
     },
-  })
+  }),
 );
 
+app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
@@ -63,7 +68,7 @@ app.use(
     res.setHeader("Cache-Control", `public, max-age=${7 * 24 * 60 * 60}`);
     next();
   },
-  express.static(path.join(__dirname, "Uploads"))
+  express.static(path.join(__dirname, "Uploads")),
 );
 
 app.get("/", (req, res) => {
@@ -73,9 +78,9 @@ app.get("/", (req, res) => {
 app.use("/api/jobs", jobRoutes);
 app.use("/api/resumes", resumeRoutes);
 
-
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message || "Server Error" });
 });
+
 export default app;
