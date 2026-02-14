@@ -7,6 +7,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import jobRoutes from "./routes/jobRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
 
 // Load environment variables
@@ -69,6 +70,12 @@ app.get("/", (req, res) => {
   res.send("✅ Welcome to the CV Screening API!");
 });
 
+app.use("/api/jobs", jobRoutes);
 app.use("/api/resumes", resumeRoutes);
 
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: err.message || "Server Error" });
+});
 export default app;
