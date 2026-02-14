@@ -8,7 +8,7 @@ const App = () => {
   const [criteria, setCriteria] = useState<ScreeningCriteria>({
     title: "",
     description: "",
-    skills: {}, // FIX: Initialized as object for weighted skills
+    skills: {}, 
     workExperienceYears: 0,
     eduacationLevel: 1,
     educationField: "",
@@ -30,7 +30,7 @@ const App = () => {
           />
           <BulkUpload
             activeJobId={activeJobId}
-            setActiveJobId={setActiveJobId} // Pass setter to allow manual selection
+            setActiveJobId={setActiveJobId} 
             setTopCandidates={setTopCandidates}
             setLoading={setLoading}
           />

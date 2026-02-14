@@ -16,7 +16,7 @@ const BulkUpload: React.FC<BulkUploadProps> = ({ activeJobId, setActiveJobId, se
   const [isUploading, setIsUploading] = useState(false);
   const [availableJobs, setAvailableJobs] = useState<{ _id: string; title: string }[]>([]);
 
-  // Fetch jobs from database when component mounts or a new job is added
+  
   useEffect(() => {
     const fetchJobs = async () => {
       try {
