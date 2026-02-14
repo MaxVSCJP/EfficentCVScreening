@@ -1,6 +1,7 @@
 import { saveFile } from "../utils/SaveFiles.js";
 import Resume from "../models/ResumeModel.js";
 import Job from "../models/JobModel.js";
+import resumeQueue from "../queue/resumeQueue.js";
 
 export const uploadResume = async (req, res) => {
   const { jobId } = req.params;
@@ -20,20 +21,21 @@ export const uploadResume = async (req, res) => {
   };
 
   try {
-    if (!req.file) {
+    if (!req.files) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
     for (const file of req.files) {
-      const fileUrl = await saveFile(file.buffer, file.originalname);
+      const { fileUrl, filePath } = await saveFile(file.buffer, file.originalname);
+
       const resume = new Resume({
         fileUrl,
         jobId: jobId,
       });
       await resume.save();
 
-      await pdfQueue.add("parse-pdf", {
-        filePath: fileUrl,
+      await resumeQueue.add("parse-pdf", {
+        filePath: filePath,
         jobRequirements: jobRequirements,
       });
     }

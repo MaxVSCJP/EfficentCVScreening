@@ -1,4 +1,6 @@
 import { Queue } from "bullmq";
-import connection from "./connection";
+import connection from "../utils/redis.js";
 
-export default resumeQueue = new Queue("pdf-processing", { connection });
+const resumeQueue = new Queue("pdf-processing", { connection });
+
+export default resumeQueue;
