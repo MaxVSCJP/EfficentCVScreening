@@ -8,7 +8,7 @@ const App = () => {
   const [criteria, setCriteria] = useState<ScreeningCriteria>({
     title: '',
     description: '',
-    skills: '',
+    skills: {}, 
     workExperienceYears: 0,
     eduacationLevel: 1,
     educationField: '',
@@ -23,11 +23,25 @@ const App = () => {
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-8">
         <div className="col-span-4 space-y-6">
-          <CriteriaForm criteria={criteria} setCriteria={setCriteria} onSaveSuccess={(id) => setActiveJobId(id)} />
-          <BulkUpload jobId={activeJobId} setTopCandidates={setTopCandidates} setLoading={setLoading} />
+          <CriteriaForm 
+            criteria={criteria} 
+            setCriteria={setCriteria} 
+            onSaveSuccess={(id) => setActiveJobId(id)} 
+          />
+          
+          <BulkUpload 
+            jobId={activeJobId} 
+            setTopCandidates={setTopCandidates} 
+            setLoading={setLoading} 
+          />
         </div>
+
         <div className="col-span-8">
-          <ResultsTable data={topCandidates} loading={loading} requestedRank={criteria.rankLimit} />
+          <ResultsTable 
+            data={topCandidates} 
+            loading={loading} 
+            requestedRank={criteria.rankLimit} 
+          />
         </div>
       </div>
     </div>

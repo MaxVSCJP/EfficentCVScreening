@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Save, Loader2, CheckCircle, Wrench } from 'lucide-react';
-import { saveRequirementsApi } from '../api/screening';
-import type { ScreeningCriteria } from '../types';
+import React, { useState } from "react";
+import { Save, Loader2, CheckCircle, Plus, X } from "lucide-react";
+import { saveRequirementsApi } from "../api/screening";
+import type { ScreeningCriteria } from "../types";
 
 interface Props {
   criteria: ScreeningCriteria;
@@ -9,21 +9,54 @@ interface Props {
   onSaveSuccess: (jobId: string | number) => void;
 }
 
-const CriteriaForm: React.FC<Props> = ({ criteria, setCriteria, onSaveSuccess }) => {
+const CriteriaForm: React.FC<Props> = ({
+  criteria,
+  setCriteria,
+  onSaveSuccess,
+}) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+  const [newWeight, setNewWeight] = useState(5);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    const finalValue = (name === 'rankLimit' || name === 'workExperienceYears' || name === 'eduacationLevel')
-      ? (value === '' ? '' : Number(value))
-      : value;
+    const finalValue =
+      name === "rankLimit" ||
+      name === "workExperienceYears" ||
+      name === "eduacationLevel"
+        ? value === ""
+          ? ""
+          : Number(value)
+        : value;
     setCriteria({ ...criteria, [name]: finalValue });
     setSaved(false);
   };
 
+  const addSkill = () => {
+    if (!newSkill.trim()) return;
+    setCriteria({
+      ...criteria,
+      skills: { ...criteria.skills, [newSkill.trim()]: newWeight },
+    });
+    setNewSkill("");
+    setSaved(false);
+  };
+
+  const removeSkill = (skillName: string) => {
+    const updatedSkills = { ...criteria.skills };
+    delete updatedSkills[skillName];
+    setCriteria({ ...criteria, skills: updatedSkills });
+    setSaved(false);
+  };
+
   const handleSave = async () => {
-    if (!criteria.title || !criteria.description) return alert("Title and Description are required.");
+    if (!criteria.title || !criteria.description)
+      return alert("Title and Description are required.");
     setIsSaving(true);
     try {
       const data = await saveRequirementsApi(criteria);
@@ -38,52 +71,155 @@ const CriteriaForm: React.FC<Props> = ({ criteria, setCriteria, onSaveSuccess })
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-      <h2 className="text-lg font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">1. Set Requirements</h2>
+      <h2 className="text-lg font-bold mb-4 text-slate-800 border-b pb-2">
+        1. Set Requirements
+      </h2>
       <div className="space-y-4">
+        {/* Job Title */}
         <div>
-          <label htmlFor="title" className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Job Title</label>
-          <input id="title" name="title" type="text" value={criteria.title} onChange={handleChange} title="Job Title" placeholder="e.g. Software Engineer" className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none" />
+          <label
+            htmlFor="title"
+            className="block text-[10px] font-bold uppercase text-slate-500 mb-1"
+          >
+            Job Title
+          </label>
+          <input
+            id="title"
+            name="title"
+            type="text"
+            value={criteria.title}
+            onChange={handleChange}
+            placeholder="e.g. Software Engineer"
+            title="Enter Job Title"
+            className="w-full p-2 bg-slate-50 border rounded-lg text-sm outline-none"
+          />
         </div>
 
+        {/* Skills Section */}
         <div>
-          <label htmlFor="description" className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Description</label>
-          <textarea id="description" name="description" value={criteria.description} onChange={handleChange} title="Job Description" placeholder="Responsibilities..." className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg h-24 text-sm outline-none" />
-        </div>
+          <label
+            htmlFor="skillInput"
+            className="block text-[10px] font-bold uppercase text-slate-500 mb-1"
+          >
+            Skills & Weight (1-10)
+          </label>
+          <div className="flex gap-2 mb-3">
+            <input
+              id="skillInput"
+              type="text"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              placeholder="Skill (e.g. React)"
+              title="Skill Name"
+              className="flex-1 p-2 bg-slate-50 border rounded-lg text-sm outline-none"
+            />
+            <input
+              id="weightInput"
+              type="number"
+              value={newWeight}
+              onChange={(e) => setNewWeight(Number(e.target.value))}
+              placeholder="5"
+              title="Skill Weight"
+              className="w-16 p-2 bg-slate-50 border rounded-lg text-sm outline-none"
+              min="1"
+              max="10"
+            />
+            <button
+              type="button"
+              onClick={addSkill}
+              title="Add Skill"
+              aria-label="Add Skill"
+              className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <Plus size={18} />
+            </button>
+          </div>
 
-        <div>
-          <label htmlFor="skills" className="block text-[10px] font-bold uppercase text-slate-500 mb-1 flex items-center gap-1"><Wrench size={10} /> Skills</label>
-          <textarea id="skills" name="skills" value={criteria.skills} onChange={handleChange} title="Skills" placeholder="React, Python, etc." className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg h-20 text-sm outline-none" />
+          {/* Skill Tags */}
+          <div className="flex flex-wrap gap-2 min-h-[40px] p-2 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+            {Object.entries(criteria.skills).map(([name, weight]) => (
+              <div
+                key={name}
+                className="flex items-center gap-2 bg-white border border-slate-200 px-2 py-1 rounded-md shadow-sm"
+              >
+                <span className="text-xs font-bold text-slate-700">{name}</span>
+                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 rounded-full">
+                  {weight}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeSkill(name)}
+                  title={`Remove ${name}`}
+                  aria-label={`Remove ${name}`}
+                  className="text-slate-400 hover:text-red-500"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
+          {/* Education Level */}
           <div>
-            <label htmlFor="eduacationLevel" className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Min Education</label>
-            <select id="eduacationLevel" name="eduacationLevel" value={criteria.eduacationLevel} onChange={handleChange} title="Education Level" className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+            <label
+              htmlFor="eduacationLevel"
+              className="block text-[10px] font-bold uppercase text-slate-500 mb-1"
+            >
+              Min Education
+            </label>
+            <select
+              id="eduacationLevel"
+              name="eduacationLevel"
+              value={criteria.eduacationLevel}
+              onChange={handleChange}
+              title="Select Education Level"
+              className="w-full p-2 bg-slate-50 border rounded-lg text-sm"
+            >
               <option value={1}>Bachelor's</option>
               <option value={2}>Master's</option>
               <option value={3}>PhD</option>
             </select>
           </div>
+          {/* Work Experience */}
           <div>
-            <label htmlFor="educationField" className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Field</label>
-            <input id="educationField" name="educationField" type="text" value={criteria.educationField} onChange={handleChange} title="Education Field" placeholder="e.g. CS" className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none" />
+            <label
+              htmlFor="workExperienceYears"
+              className="block text-[10px] font-bold uppercase text-slate-500 mb-1"
+            >
+              Exp (Yrs)
+            </label>
+            <input
+              id="workExperienceYears"
+              name="workExperienceYears"
+              type="number"
+              value={criteria.workExperienceYears}
+              onChange={handleChange}
+              placeholder="0"
+              title="Years of Experience"
+              className="w-full p-2 bg-slate-50 border rounded-lg text-sm outline-none"
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="workExperienceYears" className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Exp (Yrs)</label>
-            <input id="workExperienceYears" name="workExperienceYears" type="number" value={criteria.workExperienceYears} onChange={handleChange} title="Experience" className="w-full p-2 bg-slate-50 border rounded-lg text-sm outline-none" />
-          </div>
-          <div>
-            <label htmlFor="rankLimit" className="block text-[10px] font-bold uppercase text-blue-600 mb-1">Rank Top X</label>
-            <input id="rankLimit" name="rankLimit" type="number" value={criteria.rankLimit} onChange={handleChange} title="Rank Limit" className="w-full p-2 bg-blue-50 border-2 border-blue-100 rounded-lg text-sm font-bold text-blue-700 outline-none" />
-          </div>
-        </div>
-
-        <button type="button" onClick={handleSave} disabled={isSaving || saved} className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-md transition-all ${saved ? 'bg-green-100 text-green-700' : 'bg-slate-800 text-white hover:bg-slate-900'}`}>
-          {isSaving ? <Loader2 className="animate-spin" size={18}/> : saved ? <CheckCircle size={18}/> : <Save size={18}/>}
-          {saved ? "Job Saved" : "Save Requirements"}
+        {/* Save Button */}
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving || saved}
+          title="Save Requirements"
+          aria-label="Save Requirements"
+          className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${saved ? "bg-green-100 text-green-700" : "bg-slate-800 text-white hover:bg-slate-900"}`}
+        >
+          {isSaving ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : saved ? (
+            <CheckCircle size={18} />
+          ) : (
+            <Save size={18} />
+          )}
+          {saved ? "Criteria Saved" : "Save Requirements"}
         </button>
       </div>
     </div>
