@@ -8,8 +8,8 @@ const upload = multer({
     dest: "Uploads/",
 })
 
-router.post("/upload", upload.array("resume"), uploadResume);
-router.get("/:jobId", getResumesForJob);
+router.post("/upload/:id", getResumesForJob);
+router.get("/:jobId", uploadResume);
 
 export default router;
 
