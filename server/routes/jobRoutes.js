@@ -7,6 +7,10 @@ router.post("/", createJob);
 router.get("/", getJobs);
 router.get("/:id", getJob);
 router.put("/:id", updateJob);
-router.delete("/:id", deleteJob);
+router.delete("/:id", deletedJob);
+
+
+
+
 
 export default router;
