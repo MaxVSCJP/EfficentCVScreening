@@ -2,7 +2,7 @@ import React from "react";
 import { Trophy, User, GraduationCap, ChevronRight } from "lucide-react";
 import type { Candidate } from "../types";
 
-// The Interface must match exactly what App.tsx is sending
+
 interface ResultsTableProps {
   data: Candidate[];
   loading: boolean;
