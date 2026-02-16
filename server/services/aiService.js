@@ -1,9 +1,32 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import "dotenv/config";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export default async function extractJsonFromText(text, scoringMatrix) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+  const schema = {
+    type: SchemaType.OBJECT,
+    properties: {
+      name: { type: SchemaType.STRING },
+      email: { type: SchemaType.STRING },
+      phone: { type: SchemaType.STRING },
+      skillScore: { type: SchemaType.NUMBER },
+      workScore: { type: SchemaType.NUMBER },
+      educationScore: { type: SchemaType.NUMBER },
+      similarityScore: { type: SchemaType.NUMBER },
+      averageScore: { type: SchemaType.NUMBER },
+    },
+    required: ["name", "email", "phone", "skillScore", "workScore", "educationScore", "similarityScore", "averageScore"],
+  };
+
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    // 2. Apply the configuration here
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: schema,
+    },
+  });
 
   const prompt = `
 ### ROLE
@@ -39,7 +62,7 @@ Calculate the following scores on a scale of 0 to 10 (10 being a perfect match):
    - Calculate the mathematical mean of the four scores above.
 
 ### OUTPUT INSTRUCTIONS
-Return ONLY a valid JSON object. Do not include any conversational filler, markdown formatting (unless specifically asked for a code block), or explanations.
+Return ONLY a valid JSON object. Do not include any conversational filler, markdown formatting, or explanations.
 
 {
   "name": "string",

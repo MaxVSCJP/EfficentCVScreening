@@ -168,7 +168,7 @@ const CriteriaForm: React.FC<Props> = ({ criteria, setCriteria, onSaveSuccess })
           <div>
             <label htmlFor="rankLimit" className="block text-[10px] font-bold uppercase text-blue-600 mb-1">Rank Top X</label>
             <input 
-              id="rankLimit" name="rankLimit" type="number" value={criteria.rankLimit} onChange={handleChange} 
+              id="rankLimit" name="rankLimit" type="number" value={criteria.candidateCount} onChange={handleChange} 
               placeholder="5" title="Rank Limit" className="w-full p-2 bg-blue-50 border-2 border-blue-100 rounded-lg text-sm font-bold text-blue-700 outline-none" 
             />
           </div>
